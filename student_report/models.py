@@ -25,13 +25,15 @@ class CustomAccountManager(BaseUserManager):
         user.set_password(password)
         user.save()
         return user
+
+#Student model
 class Student_detail(AbstractBaseUser, PermissionsMixin):
     GENDER = (
         ('F', 'Female'),
         ('M', 'Male'),
         ('O', 'Other'),
     )
-    roll_no = models.CharField(max_length=10,unique=True)
+    roll_no = models.CharField(max_length=10,primary_key=True)
     std_name = models.CharField(max_length=50, default='')
     std_gender = models.CharField(max_length=1, choices=GENDER, default='M')
     std_class = models.CharField(max_length=50, default='')
@@ -44,18 +46,21 @@ class Student_detail(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.roll_no
+
+#Subject model
 class subject(models.Model):
-    subject_code = models.CharField(max_length=10,unique=True)
+    subject_code = models.CharField(max_length=10,primary_key=True)
     subject_name = models.CharField(max_length=50, default='')
 
     def __str__(self):
         return  self.subject_name
 
+
+#Marks model
 class mark(models.Model):
-    roll_no = models.OneToOneField(Student_detail,on_delete=models.SET_DEFAULT,default="0000")
-    subject_code = models.OneToOneField(subject,on_delete=models.SET_DEFAULT,default="000")
-    marks = models.DecimalField(max_digits = 5,
-                         decimal_places = 2)
+    student = models.ForeignKey(Student_detail,on_delete=models.SET_DEFAULT,default="0000")
+    subject = models.ForeignKey(subject,on_delete=models.SET_DEFAULT,default="000")
+    marks = models.DecimalField(max_digits = 5,decimal_places = 2)
 
 
 
