@@ -47,21 +47,38 @@ class Student_detail(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.roll_no
 
-#Subject model
-class subject(models.Model):
-    subject_code = models.CharField(max_length=10,primary_key=True)
-    subject_name = models.CharField(max_length=50, default='')
 
-    def __str__(self):
-        return  self.subject_name
 
 
 #Marks model
 class mark(models.Model):
-    student = models.ForeignKey(Student_detail,on_delete=models.SET_DEFAULT,default="0000")
-    subject = models.ForeignKey(subject,on_delete=models.SET_DEFAULT,default="000")
+    Sub_code = (
+        ('001', '001'),
+        ('002', '002'),
+        ('003', '003'),
+        ('004', '004'),
+        ('005', '005'),
+    )
+    Sub_name = (
+        ('Physics', 'Physics'),
+        ('Chemistry', 'Chemistry'),
+        ('Maths', 'Maths'),
+        ('Music', 'Music'),
+        ('Computers', 'Computers'),
+    )
+    student = models.ForeignKey(Student_detail,related_name='marks',on_delete=models.CASCADE)
+    subject_code = models.CharField(max_length=10,choices=Sub_code, default='0')
+    subject_name = models.CharField(max_length=50, choices=Sub_name, default='0')
     marks = models.DecimalField(max_digits = 5,decimal_places = 2)
 
+
+    @property
+    def roll_no(self):
+        return self.student.roll_no
+     
+    @property
+    def student_name(self):
+        return self.student.student_name
 
 
 

@@ -1,12 +1,246 @@
-{% block title %}Student Report{% endblock %}
-<br>
-{% block content %}
-You are logged in<br>
-{% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <a href="{% url 'logout' %}">Log Out</a>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">Log In</a>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Student Report</title>
+    <style>
+  * {
+  box-sizing: border-box;
+}
+
+.row {
+  margin-left:-5px;
+  margin-right:-5px;
+}
+  
+.column {
+  float: left;
+  width: 50%;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+      button{
+        width: 5%;
+        height: 10%;
+        background-color: #98afec;
+      }
+      h1 {text-align: center;}
+      h3 {text-align: center;}
+p {text-align: center;}
+div {text-align: center; 
+height: max-content;}
+      #report, #PI,#max {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+/* #PI th{
+  width: 20%;
+}
+#report td,#PI td, #report th,#PI th ,#max th,#max td{
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#report tr:nth-child(even),#PI tr:nth-child(even),#max tr:nth-child(even) {background-color: #f2f2f2;}
+
+#report tr:hover,#PI tr:hover,#max tr:hover {background-color: #ddd;}
+
+#report th , #PI th, #max th{
+  font-weight: 900;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #a0b7f5;
+  color: white;
+} */
+    </style>
+</head>
+<body style="background-color:rgb(192, 194, 196);">
+    <div style="align-items: center;">
+      <div id="login" style="background-color: aliceblue;">
+      {% if user.is_authenticated %}
+      <div style="background-color: #011b69; color: #f2f2f2;">
+  <h1>Welcome! {{ user.std_name }}</h1>
+  <h3>REPORT CARD</h3><a href="{% url 'logout' %}"><button> Log Out</button></a></div>
+  <div>
+    <h2>Personal Information</h2>
+    <table id="PI">
+      <tr>
+        <th>Name</th>
+        <td>{{user.std_name}}</td>
+      </tr>
+      <tr>
+        <th>Roll Number</th>
+        <td>{{user.roll_no}}</td>
+      </tr>
+      <tr>
+        <th>Gender</th>
+        <td>{{user.std_gender}}</td>
+      </tr>
+      
+    </table>
+    <div class="row">
+
+      <div class="column">
+    <h2>Marks Obtained</h2>
+        
+        <p id="report"></p></div>
+    
+    <div class="column"> <h2>Highest Scorer</h2><p id="max"></p></div>
+    
+  </div>
+  <!-- <table id="report"> 
+    <tr>
+      <th>Subject</th>
+      <th>Marks Secured</th>
+      <th>Highest Scorer</th>
+    </tr>
+   
+<tr id="physics">
+  <td>Physics</td>
+  <td>some text</td>   
+  <td>some text</td>       
+</tr>
+<tr id="chemistry">
+  <td>Chemistry</td>
+  <td>some text</td> 
+  <td>some text</td>             
+</tr>
+<tr id="maths">
+  <td>Maths</td>
+  <td>some text</td> 
+  <td>some text</td>             
+</tr>
+<tr id="music">
+  <td>Music</td>
+  <td>some text</td>   
+  <td>some text</td>           
+</tr>
+<tr id="computers">
+  <td>Computers</td>
+  <td>some text</td>  
+  <td>some text</td>            
+</tr>
+<tr id="total">
+  <td>Total</td>
+  <td>some text</td> 
+  <td>some text</td>             
+</tr>
+  
+  </table>  -->
+
+  {% else %}
+  
+  <h1>Please Log In</h1>
+  <a href="{% url 'login' %}"><button>Log In</button></a>
+</div>
 {% endif %}
-{% endblock %}
+</div>
+    </div>
+ 
+ 
+
+</body>
+</html>
+<script>
+
+  let data_user = {{ data |safe }};
+  let max_marks = {{ max_marks | safe }};
+  let marks_obt = data_user.marks
+  let columns= ['Subject Name', 'Marks Obtained'];
+  let max_col = ['Roll Number','Subject Name', 'Highest Scorer Name']
+  
+  var col = [];
+        for (var i = 0; i < marks_obt.length; i++) {
+            for (var key in marks_obt[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+        }
+        var col1 = [];
+        for (var i = 0; i < max_marks.length; i++) {
+            for (var key in max_marks[i]) {
+                if (col1.indexOf(key) === -1) {
+                    col1.push(key);
+                }
+            }
+        }
+
+        // CREATE DYNAMIC TABLE.
+        var table = document.createElement("table");
+        var table1 = document.createElement("table");
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+        var tr = table.insertRow(-1);                   // TABLE ROW.
+        var tr1 = table1.insertRow(-1);  
+        for (var i = 0; i < columns.length; i++) {
+            var th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = columns[i];
+            tr.appendChild(th);
+        }
+        for (var i = 0; i < max_col.length; i++) {
+            var th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = max_col[i];
+            tr1.appendChild(th);
+        }
+        // ADD JSON DATA TO THE TABLE AS ROWS.
+        for (var i = 0; i < marks_obt.length; i++) {
+
+            tr = table.insertRow(-1);
+
+            for (var j = 0; j < col.length-1; j++) {
+                var tabCell = tr.insertCell(-1);
+                tabCell.innerHTML = marks_obt[i][col[j]];
+                
+            }
+        }
+        for (var i = 0; i < max_marks.length; i++) {
+
+tr1= table1.insertRow(-1);
+
+for (var j = 0; j < col1.length; j++) {
+    var tabCell = tr1.insertCell(-1);
+    tabCell.innerHTML = max_marks[i][col1[j]];
+    
+}
+}
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        var divContainer = document.getElementById("report");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
+        var divContainer1 = document.getElementById("max");
+        divContainer1.innerHTML = "";
+        divContainer1.appendChild(table1);
+</script>
